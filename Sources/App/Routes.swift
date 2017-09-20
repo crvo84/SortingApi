@@ -2,23 +2,23 @@ import Vapor
 
 extension Droplet {
     func setupRoutes() throws {
-        get("hello") { req in
-            var json = JSON()
-            try json.set("hello", "world")
-            return json
-        }
+        post("sort") { req in
+            // get array (from body) and check if its not empty
+            guard let array = req.json?.array, !array.isEmpty
+                else { return "Error: no data" }
+            
+            let intArray = array.flatMap { $0.int }
+            
+            // check that all values were Ints
+            guard array.count == intArray.count else { return "Error: invalid data" }
 
-        get("plaintext") { req in
-            return "Hello, world!"
+            let sortedArray = SortBrain.sort(type: Int.self, array: intArray, algorithm: .merge)
+            let result = sortedArray.flatMap { JSON($0) }
+            
+            guard result.count == sortedArray.count else { return "Error: Sorting Failed" }
+            
+            return JSON(result)
         }
-
-        // response to requests to /info domain
-        // with a description of the request
-        get("info") { req in
-            return req.description
-        }
-
-        get("description") { req in return req.description }
         
         try resource("posts", PostController.self)
     }
