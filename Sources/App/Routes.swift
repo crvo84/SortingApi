@@ -12,7 +12,7 @@ extension Droplet {
             // check that all values were Ints
             guard array.count == intArray.count else { return "Error: invalid data" }
 
-            let sortedArray = SortBrain.sort(type: Int.self, array: intArray, algorithm: .merge)
+            let sortedArray = SortBrain.sort(array: intArray, algorithm: .merge)
             let result = sortedArray.flatMap { JSON($0) }
             
             guard result.count == sortedArray.count else { return "Error: Sorting Failed" }
